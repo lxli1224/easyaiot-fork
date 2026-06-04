@@ -20,25 +20,28 @@ defineOptions({
 
 const iframeRef = ref<HTMLIFrameElement | null>(null)
 
-// 从 localStorage 获取认证凭据传递给数字孪生
+// 深度集成：同域部署，共享 localStorage，无需 URL 传参
+// 数字孪生页面直接读取 EasyAIoT 的 ACCESS_TOKEN__ 和 TENANT_ID__
 function buildTwinUrl() {
-  const base = 'http://101.43.19.180:5177?embed=1'
-  const token = localStorage.getItem('ACCESS_TOKEN__')
-  const tenantId = localStorage.getItem('TENANT_ID__') || '1'
-  if (token) {
-    return `${base}&api_token=${encodeURIComponent(token)}&tenant_id=${encodeURIComponent(tenantId)}`
-  }
-  return base
+  return '/digital-twin/?embed=1'
 }
 
 const twinUrl = ref(buildTwinUrl())
 
 const onIframeLoad = () => {
-  // 通信桥接：接收数字孪生页面发送的消息
+  // 通信桥接：接收数字孪生页面发送的消息（深度集成：同域通信）
   window.addEventListener('message', (event) => {
-    // 可以在这里处理数字孪生传来的事件（如告警点击）
-    if (event.data?.type === 'alert-click') {
-      console.log('[EasyAIoT] 数字孪生告警:', event.data.payload)
+    const { type, payload } = event.data || {}
+    switch (type) {
+      case 'alert-click':
+        console.log('[EasyAIoT] 数字孪生告警:', payload)
+        break
+      case 'device-click':
+        console.log('[EasyAIoT] 数字孪生设备:', payload)
+        break
+      case 'camera-click':
+        console.log('[EasyAIoT] 数字孪生摄像头:', payload)
+        break
     }
   })
 }

@@ -19,6 +19,8 @@ services:
       - ./logs:/app/logs
       # SSL证书（如果存在）
       - ./conf/ssl:/etc/nginx/ssl:ro
+      # 数字孪生前端构建产物
+      - ./twin-dist:/app/twin-dist:ro
       # 时区文件挂载
       - /etc/localtime:/etc/localtime:ro
 
@@ -43,6 +45,7 @@ services:
       - "video-host:host-gateway"  # 用于访问使用host网络模式的video-service（端口6000）
       - "ai-host:host-gateway"  # 用于访问使用host网络模式的ai-service（端口5000）
       - "srs-host:host-gateway"  # 用于访问使用host网络模式的SRS服务（端口1985）
+      - "twin-backend:101.43.19.180"  # 数字孪生后端服务（端口8765）
       # 云端服务器备用方案：如果host-gateway不工作，取消下面的注释并替换为实际IP（注意！！这里的-绝对不能多出来多余的空格，否则配置失效导致nginx无法访问对应的服务！！）
       # 示例（请根据实际情况修改）：
      # - "gateway:192.168.11.28"        # Docker默认网关IP

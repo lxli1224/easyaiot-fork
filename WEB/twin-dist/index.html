@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>瑞科智能 · 数字孪生 3D 可视化</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 100%; height: 100%; overflow: hidden; }
+      body { background: #0a1628; }
+      #app { width: 100%; height: 100%; }
+    </style>
+    <script type="module" crossorigin src="/digital-twin/assets/index-dwltqV0I.js"></script>
+    <link rel="stylesheet" crossorigin href="/digital-twin/assets/index-DQD--5cO.css">
+  <script>// 数字孪生 ↔ EasyAIoT 双向通信桥
+// 注入到数字孪生前端，实现深度联动
+
+(function() {
+  if (window.__TWIN_BRIDGE__) return;
+  window.__TWIN_BRIDGE__ = true;
+
+  // ===== 从 EasyAIoT 读取认证 =====
+  const token = localStorage.getItem('ACCESS_TOKEN__');
+  const tenantId = localStorage.getItem('TENANT_ID__') || '1';
+
+  // ===== 暴露到全局 =====
+  window.__EASYAIOT__ = {
+    token,
+    tenantId,
+    apiBase: window.location.origin,
+    
+    // 调用 EasyAIoT API
+    async api(path, options = {}) {
+      const url = `${this.apiBase}/admin-api${path}`;
+      const res = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Authorization': `Bearer ${this.token}`,
+          'tenant-id': this.tenantId,
+          ...(options.headers || {}),
+        },
+      });
+      return res.json();
+    },
+
+    // 通知 EasyAIoT（点击设备/告警）
+    notify(type, payload) {
+      window.parent.postMessage({ type, payload }, window.location.origin);
+    },
+  };
+
+  // ===== 监听 EasyAIoT 消息 =====
+  window.addEventListener('message', (event) => {
+    if (event.origin !== window.location.origin) return;
+    const { type, payload } = event.data || {};
+    switch (type) {
+      case 'navigate':
+        // EasyAIoT 指示孪生场景定位
+        if (window.__scene__ && payload.position) {
+          window.__scene__.focusOnPosition(payload.position.x, payload.position.y, payload.position.z);
+        }
+        break;
+      case 'alert':
+        // EasyAIoT 推送实时告警
+        window.dispatchEvent(new CustomEvent('easyaiot:alert', { detail: payload }));
+        break;
+      case 'device-status':
+        window.dispatchEvent(new CustomEvent('easyaiot:device-status', { detail: payload }));
+        break;
+    }
+  });
+
+  console.log('[TwinBridge] 深度集成通信桥已就绪 ✓', { token: !!token, tenantId });
+})();
+</script>
+</head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>
