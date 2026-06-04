@@ -59,6 +59,8 @@ RUN mkdir -p /usr/share/nginx/html /app/logs /opt/web-build-logs
 
 COPY ./conf/nginx.conf /etc/nginx/nginx.conf
 COPY --from=builder /app/dist /usr/share/nginx/html
+# 数字孪生前端构建产物（同域部署 /digital-twin/）
+COPY --from=builder /app/twin-dist /usr/share/nginx/html/digital-twin
 COPY --from=builder /tmp/web-build-logs /opt/web-build-logs
 
 EXPOSE 80

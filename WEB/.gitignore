@@ -40,3 +40,8 @@ docker-build-logs/*
 package-lock.json
 
 .history
+
+# Environment files with secrets
+.env.development
+.env.production
+twin-dist/

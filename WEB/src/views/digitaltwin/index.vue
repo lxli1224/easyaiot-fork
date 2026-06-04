@@ -30,7 +30,7 @@ const twinUrl = ref(buildTwinUrl())
 
 const onIframeLoad = () => {
   // 通信桥接：接收数字孪生页面发送的消息（深度集成：同域通信）
-  window.addEventListener('message', (event) => {
+  _msgHandler = (event) => {
     const { type, payload } = event.data || {}
     switch (type) {
       case 'alert-click':

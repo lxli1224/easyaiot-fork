@@ -11,7 +11,7 @@ services:
       - NACOS_AUTH_ENABLE=true
       - NACOS_AUTH_IDENTITY_KEY=nacos
       - NACOS_AUTH_IDENTITY_VALUE=nacos
-      - NACOS_AUTH_TOKEN=SecretKey345901234567890126785678901234567890123901234567890123445678
+      - NACOS_AUTH_TOKEN=${NACOS_AUTH_TOKEN:-SecretKey345901234567890126785678901234567890123901234567890123445678}
       - JVM_XMS=512m
       - JVM_XMX=512m
       - JVM_XMN=256m
@@ -177,7 +177,7 @@ services:
       --save 60 1000
       --loglevel warning
       --appendonly yes
-      --requirepass basiclab@iot975248395
+      --requirepass ${REDIS_PASSWORD:-basiclab@iot975248395}
       --maxclients 10000
       --timeout 300
       --tcp-keepalive 60
@@ -190,7 +190,7 @@ services:
       test:
         [
           "CMD-SHELL",
-          "redis-cli -a basiclab@iot975248395 ping | grep PONG || exit 1",
+          "redis-cli -a ${REDIS_PASSWORD:-basiclab@iot975248395} ping | grep PONG || exit 1",
         ]
       interval: 10s
       timeout: 5s
@@ -279,7 +279,7 @@ services:
     environment:
       - TZ=Asia/Shanghai
       - MINIO_ROOT_USER=minioadmin
-      - MINIO_ROOT_PASSWORD=basiclab@iot975248395
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD:-basiclab@iot975248395}
     command: server /data --console-address ":9001"
     volumes:
       - "./minio_data/data:/data:rw"
@@ -385,7 +385,7 @@ services:
       - EMQX_NODE__COOKIE=emqxsecretcookie
       - EMQX_CLUSTER__DISCOVERY_STRATEGY=static
       - EMQX_DASHBOARD__DEFAULT_USERNAME=admin
-      - EMQX_DASHBOARD__DEFAULT_PASSWORD=basiclab@iot6874125784
+      - EMQX_DASHBOARD__DEFAULT_PASSWORD=${EMQX_DASHBOARD_PASSWORD:-basiclab@iot6874125784}
       - EMQX_LOG__LEVEL=warning
     volumes:
       - emqx_data:/opt/emqx/data

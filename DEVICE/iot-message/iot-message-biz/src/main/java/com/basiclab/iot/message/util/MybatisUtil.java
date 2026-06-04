@@ -91,10 +91,9 @@ public class MybatisUtil {
      * @param sql
      */
     public static void executeSql(String sql) throws SQLException {
-        Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
-        Statement stmt = connection.createStatement();
-        stmt.executeUpdate(sql);
-        stmt.close();
-        connection.close();
+        try (Connection connection = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+             Statement stmt = connection.createStatement()) {
+            stmt.executeUpdate(sql);
+        }
     }
 }

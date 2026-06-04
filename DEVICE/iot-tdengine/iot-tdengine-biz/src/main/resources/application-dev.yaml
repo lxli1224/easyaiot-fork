@@ -53,7 +53,7 @@ spring:
     host: 14.18.122.2 # 地址
     port: 6379 # 端口
     database: 0 # 数据库索引
-    password: basiclab@iot975248395 # 密码，建议生产环境开启
+    password: ${REDIS_PASSWORD:basiclab@iot975248395} # 密码，建议生产环境开启
     lettuce:
       pool:
         max-active: 8    # 根据业务需求设置（生产环境建议8-16）

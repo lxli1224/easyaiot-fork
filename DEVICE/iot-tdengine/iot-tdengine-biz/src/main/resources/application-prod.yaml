@@ -53,7 +53,7 @@ spring:
     host: 10.0.0.87 # 地址
     port: 6379 # 端口
     database: 1 # 数据库索引
-    password: basiclab@iot975248395 # 密码，建议生产环境开启
+    password: ${REDIS_PASSWORD:basiclab@iot975248395} # 密码，建议生产环境开启
 
 --- #################### MQ 消息队列相关配置 ####################
 
