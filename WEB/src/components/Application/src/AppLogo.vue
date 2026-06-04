@@ -37,7 +37,7 @@ function goHome() {
 <template>
   <div class="ant-icon" :class="getAppLogoClass" @click="goHome">
     <div class="logo-icon">
-      <img class="uc-logo" src="@/assets/images/logo.png"/>
+      <img class="uc-logo" src="@/assets/images/ruike-logo.svg"/>
     </div>
     <div v-show="showTitle" class="truncate md:opacity-100 logo-title" :class="getTitleClass">
       {{ title }}

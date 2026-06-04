@@ -1,13 +1,15 @@
 <template>
   <div class="monitor-header">
     <div class="header-left">
+      <img src="@/assets/images/ruike-logo.svg" class="header-logo" alt="瑞科智能" />
+      <span class="header-brand">瑞科智能</span>
       <div class="date-time">
         {{ currentDate }} {{ currentDay }}
       </div>
     </div>
     
     <div class="header-center">
-      <h1 class="platform-title">云边端一体算法预警监控平台</h1>
+      <h1 class="platform-title">瑞科智能 · 云边端一体算法预警监控平台</h1>
     </div>
     
     <div class="header-right">
@@ -66,7 +68,7 @@ onUnmounted(() => {
 
 <style lang="less" scoped>
 .monitor-header {
-  height: 70px;
+  height: 56px;
   background: linear-gradient(135deg, rgba(15, 34, 73, 0.8), rgba(24, 46, 90, 0.6));
   border-bottom: 1px solid rgba(52, 134, 218, 0.3);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), inset 0 0 30px rgba(52, 134, 218, 0.1);
@@ -94,10 +96,23 @@ onUnmounted(() => {
   flex: 1;
   display: flex;
   align-items: center;
+  gap: 10px;
+}
+
+.header-logo {
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.header-brand {
+  font-size: 13px;
+  color: #8ab8e0;
+  letter-spacing: 2px;
+  white-space: nowrap;
 }
 
 .date-time {
-  font-size: 16px;
+  font-size: 13px;
   color: rgba(200, 220, 255, 0.95);
   font-weight: 500;
   text-shadow: 0 0 8px rgba(52, 134, 218, 0.5);
@@ -116,7 +131,7 @@ onUnmounted(() => {
 .platform-title {
   color: #ffffff;
   text-align: center;
-  font-size: 32px;
+  font-size: 20px;
   line-height: 1.2;
   letter-spacing: .06rem;
   font-weight: bold;

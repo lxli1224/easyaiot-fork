@@ -963,8 +963,8 @@ watch(() => alertRecordList.value, () => {
 
 .monitor-header {
   flex-shrink: 0;
-  height: 50px;
-  min-height: 50px;
+  height: 36px;
+  min-height: 36px;
   background: rgba(52, 134, 218, 0.08);
   border-bottom: 1px solid rgba(52, 134, 218, 0.3);
   color: #fff;
@@ -972,23 +972,23 @@ watch(() => alertRecordList.value, () => {
   padding: 0 20px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 10px;
   position: relative;
   z-index: 1;
 
   .header-title {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: #ffffff;
   }
 
   .header-time {
-    font-size: 14px;
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.8);
   }
 
   .header-location {
-    font-size: 14px;
+    font-size: 11px;
     color: rgba(255, 255, 255, 0.6);
     flex: 1;
   }
@@ -1005,7 +1005,7 @@ watch(() => alertRecordList.value, () => {
 
     :deep(.ant-checkbox-wrapper) {
       color: rgba(200, 220, 255, 0.95) !important;
-      font-size: 14px;
+      font-size: 12px;
       line-height: 1;
       white-space: nowrap;
     }
@@ -1031,6 +1031,7 @@ watch(() => alertRecordList.value, () => {
     }
 
     :deep(.ant-checkbox + span) {
+      font-size: 12px;
       color: rgba(200, 220, 255, 0.95) !important;
       padding-inline-start: 8px;
     }
@@ -1043,8 +1044,8 @@ watch(() => alertRecordList.value, () => {
     margin-left: auto;
 
     .split-btn {
-      min-width: 60px;
-      height: 32px;
+      min-width: 48px;
+      height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1054,8 +1055,8 @@ watch(() => alertRecordList.value, () => {
       cursor: pointer;
       transition: all 0.3s;
       color: rgba(200, 220, 255, 0.9);
-      font-size: 12px;
-      padding: 0 8px;
+      font-size: 10px;
+      padding: 0 6px;
       white-space: nowrap;
 
       &:hover {
@@ -1233,7 +1234,7 @@ watch(() => alertRecordList.value, () => {
   border-bottom: 1px solid rgba(52, 134, 218, 0.2);
 
   .header-title {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 600;
     color: #ffffff;
   }
