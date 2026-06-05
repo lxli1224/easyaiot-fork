@@ -314,24 +314,51 @@ def create_app():
 
     # 注册蓝图（延迟导入，避免在环境变量加载前就导入）
     try:
-        from app.blueprints import export, inference, model, train, train_task, llm, ocr, speech, deploy, auto_label, plate
+        # 核心蓝图（不依赖GPU，必须加载）
+        from app.blueprints import model, train_task, llm, deploy, auto_label
         
-        app.register_blueprint(export.export_bp, url_prefix='/model/export')
-        app.register_blueprint(inference.inference_task_bp, url_prefix='/model/inference_task')
         app.register_blueprint(model.model_bp, url_prefix='/model')
-        app.register_blueprint(train.train_bp, url_prefix='/model/train_task')
         app.register_blueprint(train_task.train_task_bp, url_prefix='/model/train_task')
         app.register_blueprint(llm.llm_bp, url_prefix='/model/llm')
-        app.register_blueprint(ocr.ocr_bp, url_prefix='/model/ocr')
-        app.register_blueprint(speech.speech_bp, url_prefix='/model/speech')
         app.register_blueprint(deploy.deploy_service_bp, url_prefix='/model/deploy_service')
-        app.register_blueprint(auto_label.auto_label_bp, url_prefix='/model/dataset')  # 与其他模块保持一致，使用 /model/ 前缀
-        app.register_blueprint(plate.plate_bp, url_prefix='/model/plate')
+        app.register_blueprint(auto_label.auto_label_bp, url_prefix='/model/dataset')
+        app.logger.info("核心蓝图注册成功: model, train_task, llm, deploy, auto_label")
         
-        # 注册集群推理接口（使用不同的路由，不影响原有推理接口）
-        from app.blueprints import cluster
-        app.register_blueprint(cluster.cluster_inference_bp, url_prefix='/model/cluster')
-        print(f"✅ 所有蓝图注册成功")
+        # GPU可选蓝图（训练/推理/导出/车牌/OCR/语音需要GPU）
+        gpu_blueprints = []
+        try:
+            from app.blueprints import export, inference, ocr, speech
+            app.register_blueprint(export.export_bp, url_prefix='/model/export')
+            app.register_blueprint(inference.inference_task_bp, url_prefix='/model/inference_task')
+            app.register_blueprint(ocr.ocr_bp, url_prefix='/model/ocr')
+            app.register_blueprint(speech.speech_bp, url_prefix='/model/speech')
+            gpu_blueprints.extend(['export', 'inference', 'ocr', 'speech'])
+        except ImportError as e:
+            app.logger.warning(f"GPU蓝图跳过: {e}")
+        
+        try:
+            from app.blueprints import train
+            app.register_blueprint(train.train_bp, url_prefix='/model/train_task')
+            gpu_blueprints.append('train')
+        except ImportError as e:
+            app.logger.warning(f"训练蓝图跳过: {e}")
+        
+        try:
+            from app.blueprints import plate
+            app.register_blueprint(plate.plate_bp, url_prefix='/model/plate')
+            gpu_blueprints.append('plate')
+        except ImportError as e:
+            app.logger.warning(f"车牌蓝图跳过: {e}")
+        
+        # 集群推理接口
+        try:
+            from app.blueprints import cluster
+            app.register_blueprint(cluster.cluster_inference_bp, url_prefix='/model/cluster')
+            gpu_blueprints.append('cluster')
+        except ImportError as e:
+            app.logger.warning(f"集群蓝图跳过: {e}")
+        
+        print(f"✅ 蓝图注册成功（核心: 5, GPU: {len(gpu_blueprints)}{' -> ' + ', '.join(gpu_blueprints) if gpu_blueprints else ' 无'}）")
         
         # 启动心跳超时检查任务
         try:
@@ -341,13 +368,14 @@ def create_app():
             print(f"⚠️  启动心跳检查任务失败: {str(e)}")
 
         # 恢复因容器/进程重启而中断的训练任务
-        try:
-            from app.blueprints.train import recover_stale_train_tasks
-            recovered = recover_stale_train_tasks(app)
-            if recovered:
-                print(f'✅ 已将 {recovered} 个因服务重启中断的训练任务标记为失败')
-        except Exception as e:
-            print(f'⚠️  恢复中断训练任务失败: {str(e)}')
+        if 'train' in gpu_blueprints:
+            try:
+                from app.blueprints.train import recover_stale_train_tasks
+                recovered = recover_stale_train_tasks(app)
+                if recovered:
+                    print(f'✅ 已将 {recovered} 个因服务重启中断的训练任务标记为失败')
+            except Exception as e:
+                print(f'⚠️  恢复中断训练任务失败: {str(e)}')
     except Exception as e:
         print(f"❌ 蓝图注册失败: {str(e)}")
         import traceback

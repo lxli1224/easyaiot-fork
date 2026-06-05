@@ -11,7 +11,6 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
 from flask import Blueprint, jsonify, current_app, url_for, send_file, request
-from ultralytics import YOLO
 from sqlalchemy import desc
 import pytz
 
@@ -268,6 +267,7 @@ def process_export_async(model_id, format, export_config, export_id, task_id):
 
                 # 执行模型导出
                 logger.info(f"开始执行模型导出: format={format}")
+                from ultralytics import YOLO
                 model = YOLO(local_pt_path)
                 export_filename = f"model{SUPPORTED_FORMATS[format]['ext']}"
                 export_local_path = os.path.join(tmp_dir, export_filename)

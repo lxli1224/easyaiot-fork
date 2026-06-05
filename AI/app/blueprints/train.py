@@ -12,9 +12,17 @@ import uuid
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
 
-import torch
+try:
+    import torch
+except ImportError:
+    torch = None
+
+try:
+    from ultralytics import YOLO
+except ImportError:
+    YOLO = None
+
 from flask import current_app, jsonify, Blueprint, request
-from ultralytics import YOLO
 
 from app.blueprints.train_task import build_train_task_name, resolve_task_base_name
 from app.services.minio_service import ModelService
