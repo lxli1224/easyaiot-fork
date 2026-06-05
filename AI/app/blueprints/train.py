@@ -24,6 +24,14 @@ except ImportError:
 
 from flask import current_app, jsonify, Blueprint, request
 
+
+def _check_gpu_available():
+    """GPU 守卫：如果 torch/YOLO 不可用，返回错误响应"""
+    if torch is None or YOLO is None:
+        return jsonify({'code': 1, 'msg': 'GPU 环境不可用（torch/ultralytics 未安装），训练功能需要 GPU 服务器'}), 503
+    return None
+
+
 from app.blueprints.train_task import build_train_task_name, resolve_task_base_name
 from app.services.minio_service import ModelService
 from app.utils.gpu_utils import (
@@ -286,6 +294,9 @@ def api_upload_train_dataset():
 
 @train_bp.route('/start', methods=['POST'])
 def api_start_train():
+    err = _check_gpu_available()
+    if err:
+        return err
     train_task = None
     is_new_record = False  # 标记是否是新创建的记录
     try:
@@ -565,6 +576,8 @@ def api_train_status(task_id):
 @train_bp.route('/gpu/status', methods=['GET'])
 def api_gpu_status():
     """查询当前环境可见 GPU（与算法任务多卡探测逻辑一致）。"""
+    if torch is None:
+        return jsonify({'code': 0, 'msg': 'success', 'data': {'gpus': [], 'gpu_count': 0, 'cuda_available': False}}), 200
     return jsonify({
         'success': True,
         'code': 0,

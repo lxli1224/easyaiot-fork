@@ -26,6 +26,13 @@ try:
 except ImportError:
     YOLO = None
 
+
+def _check_gpu_available():
+    """GPU 守卫：如果 torch/YOLO 不可用，返回错误响应"""
+    if torch is None or YOLO is None:
+        return jsonify({'code': 1, 'msg': 'GPU 环境不可用（torch/ultralytics 未安装），车牌训练需要 GPU 服务器'}), 503
+    return None
+
 from app.services.minio_service import ModelService
 from db_models import (
     db,
@@ -880,6 +887,9 @@ def activate_plate_version(version_id):
 
 @plate_bp.route('/train/start', methods=['POST'])
 def start_plate_train():
+    err = _check_gpu_available()
+    if err:
+        return err
     data = request.get_json() or {}
     dataset_id = data.get('dataset_id')
     if dataset_id is None or str(dataset_id).strip() == '':
