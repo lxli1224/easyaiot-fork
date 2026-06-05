@@ -11,7 +11,7 @@ const digitalTwin: AppRouteModule = {
     orderNo: 5,
     icon: 'ant-design:environment-outlined',
     title: '数字孪生',
-    hideMenu: false,
+    hideMenu: true,
     hideChildrenInMenu: true,
     affix: false,
   },

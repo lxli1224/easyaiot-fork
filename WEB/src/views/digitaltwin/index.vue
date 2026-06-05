@@ -23,14 +23,14 @@ const iframeRef = ref<HTMLIFrameElement | null>(null)
 // 深度集成：同域部署，共享 localStorage，无需 URL 传参
 // 数字孪生页面直接读取 EasyAIoT 的 ACCESS_TOKEN__ 和 TENANT_ID__
 function buildTwinUrl() {
-  return '/digital-twin/?embed=1'
+  return '/twin/?embed=1'
 }
 
 const twinUrl = ref(buildTwinUrl())
 
 const onIframeLoad = () => {
   // 通信桥接：接收数字孪生页面发送的消息（深度集成：同域通信）
-  _msgHandler = (event) => {
+  window.addEventListener('message', (event) => {
     const { type, payload } = event.data || {}
     switch (type) {
       case 'alert-click':
