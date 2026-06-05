@@ -367,6 +367,7 @@ import { useRoute, useRouter } from "vue-router";
 import { getModelPage, runInference, runClusterInference, uploadInputFile, getInferenceTaskDetail, getInferenceTasks, getDeployServicePage } from "@/api/device/model";
 import { getLLMList, visionInference, activateLLM, type LLMModel } from "@/api/device/llm";
 import { useMessage } from '@/hooks/web/useMessage';
+import DOMPurify from 'dompurify';
 import { Tooltip } from 'ant-design-vue';
 import {
   SettingOutlined,
@@ -614,7 +615,7 @@ const formatLLMResult = (text: string | null): string => {
     }
   }
   
-  return paragraphs.join('\n');
+  return DOMPurify.sanitize(paragraphs.join('\n'));
 };
 
 const loadDetectionParams = async () => {

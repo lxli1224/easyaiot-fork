@@ -93,6 +93,7 @@
 
 <script lang="ts" setup>
 import { ref, computed } from 'vue';
+import DOMPurify from 'dompurify';
 import { BasicModal, useModalInner } from '@/components/Modal';
 import { useMessage } from '@/hooks/web/useMessage';
 import { PlusOutlined, ExperimentOutlined } from '@ant-design/icons-vue';
@@ -220,7 +221,7 @@ const formattedResult = computed(() => {
     }
   }
   
-  return paragraphs.join('\n');
+  return DOMPurify.sanitize(paragraphs.join('\n'));
 });
 
 const getPromptPlaceholder = computed(() => {

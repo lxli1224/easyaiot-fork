@@ -5,6 +5,7 @@
 """
 import logging
 import os
+import shutil
 import tempfile
 import uuid
 from concurrent.futures import ThreadPoolExecutor
@@ -267,7 +268,12 @@ def process_export_async(model_id, format, export_config, export_id, task_id):
 
                 # 执行模型导出
                 logger.info(f"开始执行模型导出: format={format}")
-                from ultralytics import YOLO
+                try:
+                    from ultralytics import YOLO
+                except ImportError:
+                    YOLO = None
+                if YOLO is None:
+                    raise Exception('GPU环境不可用')
                 model = YOLO(local_pt_path)
                 export_filename = f"model{SUPPORTED_FORMATS[format]['ext']}"
                 export_local_path = os.path.join(tmp_dir, export_filename)
@@ -302,7 +308,7 @@ def process_export_async(model_id, format, export_config, export_id, task_id):
 
                 if format == 'onnx':
                     # ONNX格式：重命名文件
-                    os.rename(os.path.join(tmp_dir, exported_files[0]), export_local_path)
+                    shutil.move(os.path.join(tmp_dir, exported_files[0]), export_local_path)
                     logger.info(f"ONNX文件已重命名: {export_local_path}")
 
                 # 上传到Minio

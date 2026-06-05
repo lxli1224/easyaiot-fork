@@ -2,6 +2,8 @@ package com.basiclab.iot.system.framework.security.config;
 
 import com.basiclab.iot.common.config.AuthorizeRequestsCustomizer;
 import com.basiclab.iot.system.enums.ApiConstants;
+import com.basiclab.iot.system.framework.security.filter.ManagementEndpointProtectionFilter;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,23 +19,35 @@ import org.springframework.security.config.annotation.web.configurers.Expression
 @Configuration(proxyBeanMethods = false, value = "systemSecurityConfiguration")
 public class SecurityConfiguration {
 
+    /**
+     * 注册管理端点保护过滤器（Servlet 级别，先于 Spring Security 执行）
+     * 
+     * 绕过 common-security 中 /**
+     * .html permitAll 的限制，
+     * 保护 Druid / Swagger / Actuator 端点。
+     */
+    @Bean
+    public FilterRegistrationBean<ManagementEndpointProtectionFilter> managementEndpointProtectionFilter() {
+        FilterRegistrationBean<ManagementEndpointProtectionFilter> registration = new FilterRegistrationBean<>();
+        registration.setFilter(new ManagementEndpointProtectionFilter());
+        registration.addUrlPatterns(
+            "/druid/*",
+            "/swagger-ui.html",
+            "/v3/api-docs", "/v3/api-docs/*",
+            "/actuator", "/actuator/*"
+        );
+        registration.setOrder(-100);
+        return registration;
+    }
+
     @Bean("systemAuthorizeRequestsCustomizer")
     public AuthorizeRequestsCustomizer authorizeRequestsCustomizer() {
         return new AuthorizeRequestsCustomizer() {
 
             @Override
             public void customize(ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry) {
-                // TODO BasicLab：这个每个项目都需要重复配置，得捉摸有没通用的方案
-                // Swagger 接口文档
-                registry.antMatchers("/v3/api-docs/**").permitAll() // 元数据
-                        .antMatchers("/swagger-ui.html").permitAll(); // Swagger UI
-                // Druid 监控
-                registry.antMatchers("/druid/**").anonymous();
-                // Spring Boot Actuator 的安全配置
-                registry.antMatchers("/actuator").anonymous()
-                        .antMatchers("/actuator/**").anonymous();
-                // RPC 服务的安全配置
-                registry.antMatchers(ApiConstants.PREFIX + "/**").permitAll();
+                // RPC 服务的安全配置（内部调用仍需认证）
+                registry.antMatchers(ApiConstants.PREFIX + "/**").authenticated();
             }
 
         };

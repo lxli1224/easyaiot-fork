@@ -59,7 +59,7 @@ function goHome() {
     }
   }
   .logo-title{
-    font-family: moon,sans-serif;font-size: 2rem !important;margin-top: -5px;
+    font-family: moon,sans-serif;font-size: 1rem !important;margin-top: -1px;
   }
 }
 

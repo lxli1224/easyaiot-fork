@@ -6,6 +6,7 @@ import { CheckCircleFilled, CloseCircleFilled, InfoCircleFilled } from '@ant-des
 import type { ConfigProps, NotificationArgsProps } from 'ant-design-vue/lib/notification'
 import { useI18n } from './useI18n'
 import { isString } from '@/utils/is'
+import DOMPurify from 'dompurify'
 
 export interface NotifyApi {
   info(config: NotificationArgsProps): void
@@ -39,7 +40,7 @@ function getIcon(iconType: string) {
 
 function renderContent({ content }: Pick<ModalOptionsEx, 'content'>) {
   if (isString(content))
-    return <div innerHTML={`<div>${content}</div>`}></div>
+    return <div innerHTML={DOMPurify.sanitize(`<div>${content}</div>`)}></div>
   else
     return content
 }

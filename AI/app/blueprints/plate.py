@@ -1018,6 +1018,9 @@ def list_plate_train_tasks():
 
 @plate_bp.route('/inference/run', methods=['POST'])
 def plate_inference_run():
+    gpu_check = _check_gpu_available()
+    if gpu_check:
+        return gpu_check
     started_at = time.time()
     data = request.get_json() if request.is_json else request.form.to_dict()
     version_id = data.get('version_id') if isinstance(data, dict) else None
