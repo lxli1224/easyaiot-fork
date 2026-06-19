@@ -1,15 +1,10 @@
 <script lang="ts" setup>
-import { ref } from 'vue'
-import { IFrame } from '@/components/iFrame'
-
-
 defineOptions({ name: 'InfraSkywalking' })
 
-const src = ref('http://skywalking.shop.iocoder.cn')
+const url = 'http://47.97.32.241:8888/skywalking/'
+window.open(url, '_blank')
 </script>
 
 <template>
-  <div>
-    <IFrame :src="src" />
-  </div>
+  <div />
 </template>

@@ -33,15 +33,15 @@ const title = computed(() => globSetting?.title ?? '')
       <AppLogo :always-show-title="true" />
     </span>
 
-    <div class="relative mx-auto h-full py-2 container sm:px-10">
+    <div class="relative h-full py-2">
       <div class="h-full flex">
-        <div class="mr-4 hidden min-h-full pl-4 xl:w-6/12 xl:flex xl:flex-col">
+        <div class="mr-4 hidden min-h-full pl-4 xl:w-[45%] xl:flex xl:flex-col xl:items-center xl:justify-center">
           <AppLogo class="-enter-x" />
         </div>
-        <div class="h-full w-full flex py-5 xl:my-0 xl:h-auto xl:w-6/12 xl:py-0">
+        <div class="h-full w-full flex py-5 xl:my-0 xl:h-auto xl:w-[55%] xl:py-0     justify-end">
           <div
             :class="`${prefixCls}-form`"
-            class="enter-x relative mx-auto my-auto w-full rounded-md px-5 py-8 shadow-md xl:ml-16 lg:w-2/4 sm:w-3/4 xl:w-auto xl:bg-transparent xl:p-4 sm:px-8 xl:shadow-none"
+            class="enter-x relative mr-8 my-auto w-full rounded-md px-5 py-8 shadow-md xl:w-auto xl:bg-transparent xl:p-4 sm:px-8 xl:shadow-none"
           >
             <LoginForm />
             <ForgetPasswordForm />
@@ -73,7 +73,7 @@ html[data-theme='dark'] {
   .@{prefix-cls} {
     padding: 0;
     /* 背景图不重复 */
-    background: url('@/assets/images/dark-bg.png') no-repeat ;
+    background: url('@/assets/images/iot-login-bg.png') no-repeat ;
     background-size: 100% 100%; /* 拉伸图片，适应容器 */
 
 
@@ -110,19 +110,21 @@ html[data-theme='dark'] {
 .@{prefix-cls} {
   padding: 0;
   //background-color: @dark-bg;
-  background: url("@/assets/images/light-bg.png") no-repeat;
+  background: url('@/assets/images/iot-login-bg.png') no-repeat;
   background-size: 100% 100%; /* 拉伸图片，适应容器 */
 
   .@{prefix-cls}-form {
     padding: 1.5rem 2.1rem .8rem 2.1rem;
-    background-color: #fff;
+    background: rgba(23, 23, 23, 0.78) !important;
+    border: 1px solid rgba(80, 80, 80, 0.6) !important;
+    backdrop-filter: blur(12px);
   }
 
   @media (max-width: @screen-xl) {
     background-color: #293146;
 
     .@{prefix-cls}-form {
-      background-color: #fff;
+      background: rgba(23, 23, 23, 0.78) !important;
     }
   }
 
@@ -234,6 +236,42 @@ html[data-theme='dark'] {
   color: rgba(255,255,255,0.85);
   letter-spacing: 6px;
   text-shadow: 0 0 16px rgba(74,158,255,0.4);
+}
+
+/* 登录框表单文字白色，适配半透明深色背景 */
+.@{prefix-cls}-form {
+  .ant-form-item-label > label {
+    color: rgba(255,255,255,0.85) !important;
+  }
+  .ant-input,
+  .ant-input-password .ant-input,
+  .ant-input-affix-wrapper {
+    background-color: rgba(35, 42, 59, 0.9) !important;
+    border-color: rgba(80, 80, 80, 0.5) !important;
+    color: #e6e6e6 !important;
+    &::placeholder {
+      color: rgba(255,255,255,0.4) !important;
+    }
+  }
+  .ant-input-password-icon,
+  .ant-input-password-icon:hover {
+    color: rgba(255,255,255,0.6) !important;
+  }
+  .ant-checkbox-wrapper {
+    color: rgba(255,255,255,0.75) !important;
+  }
+  .ant-btn-link {
+    color: rgba(74, 158, 255, 0.9) !important;
+  }
+  .ant-checkbox + span,
+  .ant-checkbox-inner {
+    background-color: rgba(35, 42, 59, 0.9) !important;
+    border-color: rgba(80, 80, 80, 0.5) !important;
+  }
+  .ant-checkbox-checked .ant-checkbox-inner {
+    background-color: #1890ff !important;
+    border-color: #1890ff !important;
+  }
 }
 
 </style>

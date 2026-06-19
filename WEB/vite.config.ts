@@ -44,7 +44,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       port: VITE_PORT,
       // Load proxy configuration from .env
       proxy,
-      // Linux 上 IDE/多进程易占满 inotify，触发 ENOSPC；轮询不占用 file watcher 配额
+      // Linux 上 IDE/多进程易占满 inotify,触发 ENOSPC;轮询不占用 file watcher 配额
       watch: isBuild
         ? undefined
         : {
@@ -75,7 +75,7 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       outDir: OUTPUT_DIR,
       // minify: 'terser',
       /**
-       * 当 minify=“minify:'terser'” 解开注释
+       * 当 minify="minify:'terser'" 解开注释
        * Uncomment when minify="minify:'terser'"
        */
       // terserOptions: {
@@ -87,6 +87,15 @@ export default ({ command, mode }: ConfigEnv): UserConfig => {
       // Turning off brotliSize display can slightly reduce packaging time
       reportCompressedSize: false,
       chunkSizeWarningLimit: 2000,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-antd': ['ant-design-vue'],
+            'vendor-echarts': ['echarts', 'vue-echarts'],
+            'vendor-i18n': ['vue-i18n'],
+          },
+        },
+      },
     },
     define: {
       __APP_INFO__: JSON.stringify(__APP_INFO__),

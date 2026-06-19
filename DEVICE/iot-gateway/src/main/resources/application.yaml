@@ -6,15 +6,6 @@ spring:
     gateway:
       # 路由配置项，对应 RouteDefinition 数组
       routes:
-        # VIDEO模块（摄像头、告警、算法任务、推流等 /admin-api/video/**）
-        - id: video-admin-api
-          uri: lb://video-server
-          order: 0
-          predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
-            - Path=/admin-api/video/**
-          filters:
-            - StripPrefix=1
-            - RewritePath=/admin-api/model/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
         # 数据集服务（含标注导入/导出：/dataset/{id}/annotation/*）
         - id: dataset-admin-api
           uri: lb://dataset-server
@@ -42,6 +33,14 @@ spring:
           filters:
             - StripPrefix=1
             - RewritePath=/admin-api/message/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
+        # 设备分类路由（实际在 infra-server）
+        - id: device-category-api
+          uri: lb://infra-server
+          order: -100
+          predicates:
+            - Path=/admin-api/device/category/**
+          filters:
+            - RewritePath=/admin-api/device/category/(?<segment>.*), /admin-api/category/${segment}
         ## device-server 服务
         - id: device-admin-api # 路由的编号
           uri: lb://device-server
@@ -91,28 +90,11 @@ spring:
           uri: lb://infra-server
           predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
             - Path=/infra/ws/**
-        # TDengine服务
-        - id: iot-modules-tdengine
-          uri: lb://tdengine-server
-          predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
-            - Path=/admin-api/tdengine/**
-          filters:
-            - RewritePath=/admin-api/device/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
-        # Broker服务
-        - id: iot-modules-broker
-          uri: lb://broker-server
-          predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
-            - Path=/admin-api/broker/**
-          filters:
-            - RewritePath=/admin-api/device/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
-        # GB28181服务
-        - id: gb28181-admin-api
-          uri: lb://iot-gb28181
-          predicates: # 断言，作为路由的匹配条件，对应 RouteDefinition 数组
-            - Path=/admin-api/gb28181/**
-          filters:
-            - RewritePath=/admin-api/gb28181/(?<segment>.*), /api/$\{segment} # 将 /admin-api/gb28181 前缀重写为 /api
-            - RewritePath=/admin-api/gb28181/v3/api-docs, /v3/api-docs # 配置，保证转发到 /v3/api-docs
+        # ========== 以下服务未部署，路由已移除 ==========
+        # video-server → 待部署
+        # tdengine-server → 已由 Nginx mock 处理
+        # broker-server → 已由 Nginx mock 处理
+        # iot-gb28181 → 已由 Nginx mock 处理
       x-forwarded:
         prefix-enabled: false # 避免 Swagger 重复带上额外的 /admin-api/system 前缀
 

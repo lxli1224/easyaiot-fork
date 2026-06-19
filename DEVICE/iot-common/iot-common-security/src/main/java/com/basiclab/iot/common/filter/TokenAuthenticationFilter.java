@@ -88,8 +88,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private LoginUser buildLoginUserByToken(String token, Integer userType) {
         if (StringUtils.isNotEmpty(token)) {
-            LoginUser loginUser = new LoginUser();
             OAuth2AccessTokenDO authDO = this.get(token);
+            // Redis 可能因过期/连接抖动返回 null，必须判空避免 NPE
+            if (authDO == null) {
+                return null;
+            }
+            LoginUser loginUser = new LoginUser();
             loginUser.setId(authDO.getUserId());
             loginUser.setUserType(authDO.getUserType());
             loginUser.setTenantId(authDO.getTenantId());

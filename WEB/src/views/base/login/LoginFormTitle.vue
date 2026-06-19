@@ -29,6 +29,7 @@ const getFormTitle = computed(() => {
 
 <style>
   .form-title{
-    text-shadow: 0 0 16px #266CFBFF;padding: 1rem 0.58rem;
+    color: #ffffff !important;
+    text-shadow: 0 0 16px rgba(38,108,251,0.6);padding: 1rem 0.58rem;
   }
 </style>

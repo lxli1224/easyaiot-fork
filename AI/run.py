@@ -315,14 +315,15 @@ def create_app():
     # 注册蓝图（延迟导入，避免在环境变量加载前就导入）
     try:
         # 核心蓝图（不依赖GPU，必须加载）
-        from app.blueprints import model, train_task, llm, deploy, auto_label
+        from app.blueprints import model, train_task, llm, deploy, auto_label, alert
         
         app.register_blueprint(model.model_bp, url_prefix='/model')
         app.register_blueprint(train_task.train_task_bp, url_prefix='/model/train_task')
         app.register_blueprint(llm.llm_bp, url_prefix='/model/llm')
         app.register_blueprint(deploy.deploy_service_bp, url_prefix='/model/deploy_service')
         app.register_blueprint(auto_label.auto_label_bp, url_prefix='/model/dataset')
-        app.logger.info("核心蓝图注册成功: model, train_task, llm, deploy, auto_label")
+        app.register_blueprint(alert.alert_bp, url_prefix='/video/alert')
+        app.logger.info("核心蓝图注册成功: model, train_task, llm, deploy, auto_label, alert")
         
         # GPU可选蓝图（训练/推理/导出/车牌/OCR/语音需要GPU）
         gpu_blueprints = []
